@@ -22,11 +22,11 @@ public class Dictionary {
 		for(String s : inputTextList){
 			RichWord rw= new RichWord(s.toLowerCase());
 
-		//	if (binarySearch(s.toLowerCase())== false){ rw.setIscorretta(false);}
-		//	parole.add(rw);
+			if (binarySearch(s.toLowerCase())== false){ rw.setIscorretta(false);}
+			parole.add(rw);}
 			
-			if (!dizionario.contains(s.toLowerCase()))rw.setIscorretta(false); 
-				parole.add(rw);}
+			//if (!dizionario.contains(s.toLowerCase()))rw.setIscorretta(false); 
+				//parole.add(rw);}
 		
 		
 		return parole;
@@ -34,9 +34,9 @@ public class Dictionary {
 	public boolean binarySearch(String key) 
 	    {
 	       int low = 0;
-	       int high = dizionario.size();
+	       int high = dizionario.size() - 1;
 	       int middle = (high+low) / 2; 
-	        while(low != high) {
+	        while(low <= high) {
              
 	            if(key.compareToIgnoreCase(dizionario.get(middle))== 0) {
 	                return true;
@@ -45,7 +45,7 @@ public class Dictionary {
 	                 low = middle +1;
 	             }
             else{
-	                 high = middle;
+	                 high = middle - 1;
 	            }
 	             middle = (high+low) / 2;
 	       }

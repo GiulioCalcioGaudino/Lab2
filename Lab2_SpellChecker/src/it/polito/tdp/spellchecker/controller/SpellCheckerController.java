@@ -16,110 +16,116 @@ import javafx.scene.text.TextFlow;
 import java.util.*;
 
 public class SpellCheckerController {
-	
+
 	Dictionary devotoOli;
 	List<String> listaDaCorreggere = new LinkedList<String>();
 	boolean flag = true;
-	
-    @FXML
-    private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private Label lblTimer;
+	@FXML
+	private URL location;
 
-    @FXML
-    private ComboBox<String> cbLanguage;
+	@FXML
+	private Label lblTimer;
 
-    @FXML
-    private TextArea txtFrase;
+	@FXML
+	private ComboBox<String> cbLanguage;
 
-    @FXML
-    private Button btnSpellCheck;
+	@FXML
+	private TextArea txtFrase;
 
-    @FXML
-    private TextFlow txtRisposta;
+	@FXML
+	private Button btnSpellCheck;
 
-    @FXML
-    private Label lblError;
+	@FXML
+	private TextFlow txtRisposta;
 
-    @FXML
-    private Button btnClearText;
+	@FXML
+	private Label lblError;
 
-    @FXML
-    void doClearText(ActionEvent event) {
-    	txtFrase.clear();
-  //  	txtRisposta.clear();
-    	txtRisposta.getChildren().clear();
-    	listaDaCorreggere.clear();		
-    	lblError.setText("");
-    	lblTimer.setText("");
-    }
-    @FXML
+	@FXML
+	private Button btnClearText;
+
+	@FXML
+	void doClearText(ActionEvent event) {
+		txtFrase.clear();
+		// txtRisposta.clear();
+		txtRisposta.getChildren().clear();
+		listaDaCorreggere.clear();
+		lblError.setText("");
+		lblTimer.setText("");
+	}
+
+	@FXML
 	void doActivation(ActionEvent event) {
 
-    if (cbLanguage.getValue() != null) {
-		
-    	txtFrase.setDisable(false);
-    				
- //   	txtRisposta.clear();
-    	}}
+		if (cbLanguage.getValue() != null) {
 
-    
-    @FXML
-    void doSpellCheck(ActionEvent event) {
-    	
-//    	txtRisposta.clear();
-    	txtRisposta.getChildren().clear();
+			txtFrase.setDisable(false);
+
+			// txtRisposta.clear();
+		}
+	}
+
+	@FXML
+	void doSpellCheck(ActionEvent event) {
+
+		// txtRisposta.clear();
+		txtRisposta.getChildren().clear();
 		listaDaCorreggere.clear();
-		flag=true;
+		flag = true;
 
-
-    	if(cbLanguage.getValue()==null) {
+		if (cbLanguage.getValue() == null) {
 			lblError.setText("Seleziona una lingua");
-			return ;}
-    	
-    	String lingua = (String) cbLanguage.getValue();
-    	
-    	if (lingua.compareTo("Italian")==0){
-    		devotoOli = new ItalianDictionary();
-    	} else {
-    		devotoOli = new EnglishDictionary();
-    	}
-    	
-    	devotoOli.loadDictionary();
-    	
-    	String inputText = txtFrase.getText();
+			return;
+		}
+
+		String lingua = (String) cbLanguage.getValue();
+
+		if (lingua.compareTo("Italian") == 0) {
+			devotoOli = new ItalianDictionary();
+		} else {
+			devotoOli = new EnglishDictionary();
+		}
+
+		devotoOli.loadDictionary();
+
+		String inputText = txtFrase.getText();
 		if (inputText.isEmpty())
 			return;
-		
+
 		StringTokenizer st = new StringTokenizer(inputText, " ");
 		while (st.hasMoreTokens()) {
-			listaDaCorreggere.add(st.nextToken().trim().toLowerCase());}
-		
-		for(int j =0; j < listaDaCorreggere.size(); j++){
-			char[] parola = listaDaCorreggere.get(j).toCharArray();
-			for (int i = 0; i < parola.length; i++) {
-				if (!Character.isLetter(parola[i])) {
-					char[] parolaFin = Arrays.copyOfRange(parola, 0, i);
-					String nuovaStringa = new String(parolaFin);
-					listaDaCorreggere.set(j, nuovaStringa);
-		}}}
+			listaDaCorreggere.add(st.nextToken().trim().toLowerCase());
+		}
+
+		for (int j = 0; j < listaDaCorreggere.size(); j++) {
+			//char[] parola = listaDaCorreggere.get(j).toCharArray();
+			String nuovaStringa = listaDaCorreggere.get(j).replaceAll("[^a-z0-9\'אטילעש]+","");
+			listaDaCorreggere.set(j, nuovaStringa);
+//			for (int i = 0; i < parola.length; i++) {
+//				if (!Character.isLetter(parola[i]) && Character.compare(parola[i], '\'') != 0) {
+//					char[] parolaFin = Arrays.copyOfRange(parola, 0, i);
+//					String nuovaStringa = new String(parolaFin);
+//					listaDaCorreggere.set(j, nuovaStringa);
+//					break;
+//				}
+//			}
+		}
 
 		long l1 = System.nanoTime();
-    	List <RichWord> paroleErrate = devotoOli.spellCheckText(listaDaCorreggere);
-    	long l2 = System.nanoTime();
-    	
-    	String result = "";
-    	for(RichWord rw : paroleErrate){
-    		if (!rw.isIscorretta()) result += rw.getParola() + " ";
-    	}
-    	
-    	
-        Text richText = new Text("");
-		
+		List<RichWord> paroleErrate = devotoOli.spellCheckText(listaDaCorreggere);
+		long l2 = System.nanoTime();
+
+		/*
+		 * String result = ""; for(RichWord rw : paroleErrate){ if
+		 * (!rw.isIscorretta()) result += rw.getParola() + " "; }
+		 */
+
+		Text richText = new Text("");
+
 		for (RichWord r : paroleErrate) {
 			if (r.isIscorretta() == true) {
 				richText = new Text(r.getParola() + " ");
@@ -130,48 +136,43 @@ public class SpellCheckerController {
 			}
 			txtRisposta.getChildren().add(richText);
 		}
-		if (flag)
-		{lblError.setText("Non ci sono errori");
-    	lblError.setTextFill(Color.BLACK);}
-		else
-		{
+		if (flag) {
+			lblError.setText("Non ci sono errori");
+			lblError.setTextFill(Color.BLACK);
+		} else {
 			lblError.setText("Il testo contiene errori!");
-    	lblError.setTextFill(Color.RED);
-    	}
-    	
-   
- /*   	txtRisposta.setText(result);
-    	
-    	if (txtRisposta.getText().compareTo("") != 0)
-    	{
-			lblError.setText("Il testo contiene errori!");
-    	lblError.setTextFill(Color.RED);
-    	}
-    	else
-			{lblError.setText("Non ci sono errori");
-    	lblError.setTextFill(Color.BLACK);}
-*/
-    	
-    	lblTimer.setText("Spell check completato in " + (l2 - l1) / 1E9 + " secondi");
-    }
+			lblError.setTextFill(Color.RED);
+		}
 
-    @FXML
-    void initialize() {
-        assert lblTimer != null : "fx:id=\"lblTimer\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert cbLanguage != null : "fx:id=\"cbLanguage\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert txtFrase != null : "fx:id=\"txtFrase\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert btnSpellCheck != null : "fx:id=\"btnSpellCheck\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert txtRisposta != null : "fx:id=\"txtRisposta\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert lblError != null : "fx:id=\"lblError\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert btnClearText != null : "fx:id=\"btnClearText\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		/*
+		 * txtRisposta.setText(result);
+		 * 
+		 * if (txtRisposta.getText().compareTo("") != 0) { lblError.setText(
+		 * "Il testo contiene errori!"); lblError.setTextFill(Color.RED); } else
+		 * {lblError.setText("Non ci sono errori");
+		 * lblError.setTextFill(Color.BLACK);}
+		 */
 
-  //      txtRisposta.setText("Selezionare una lingua");
-  //	txtRisposta.setDisable(true);
+		lblTimer.setText("Spell check completato in " + (l2 - l1) / 1E9 + " secondi");
+	}
 
-        cbLanguage.getItems().addAll("English", "Italian");
-        
-        lblError.setText("");
+	@FXML
+	void initialize() {
+		assert lblTimer != null : "fx:id=\"lblTimer\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		assert cbLanguage != null : "fx:id=\"cbLanguage\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		assert txtFrase != null : "fx:id=\"txtFrase\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		assert btnSpellCheck != null : "fx:id=\"btnSpellCheck\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		assert txtRisposta != null : "fx:id=\"txtRisposta\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		assert lblError != null : "fx:id=\"lblError\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+		assert btnClearText != null : "fx:id=\"btnClearText\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+
+		// txtRisposta.setText("Selezionare una lingua");
+		// txtRisposta.setDisable(true);
+
+		cbLanguage.getItems().addAll("English", "Italian");
+
+		lblError.setText("");
 		lblTimer.setText("");
 
-    }
+	}
 }
