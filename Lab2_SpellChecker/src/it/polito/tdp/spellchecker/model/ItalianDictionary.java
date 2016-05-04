@@ -9,7 +9,7 @@ public void loadDictionary() {
 	BufferedReader br = new BufferedReader(fr);
 	String word;
 	while ((word = br.readLine()) != null) { 
-		dizionario.add(word) ; 
+		dizionario.add(word.toLowerCase()) ; 
 		}
 		br.close();       
 		} catch (IOException e){ 

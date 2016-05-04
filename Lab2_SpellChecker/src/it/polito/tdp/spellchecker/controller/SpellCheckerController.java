@@ -19,6 +19,7 @@ public class SpellCheckerController {
 	
 	Dictionary devotoOli;
 	List<String> listaDaCorreggere = new LinkedList<String>();
+	boolean flag = true;
 	
     @FXML
     private ResourceBundle resources;
@@ -39,7 +40,7 @@ public class SpellCheckerController {
     private Button btnSpellCheck;
 
     @FXML
-    private TextArea txtRisposta;
+    private TextFlow txtRisposta;
 
     @FXML
     private Label lblError;
@@ -50,7 +51,8 @@ public class SpellCheckerController {
     @FXML
     void doClearText(ActionEvent event) {
     	txtFrase.clear();
-    	txtRisposta.clear();
+  //  	txtRisposta.clear();
+    	txtRisposta.getChildren().clear();
     	listaDaCorreggere.clear();		
     	lblError.setText("");
     	lblTimer.setText("");
@@ -62,15 +64,17 @@ public class SpellCheckerController {
 		
     	txtFrase.setDisable(false);
     				
-    	txtRisposta.clear();
+ //   	txtRisposta.clear();
     	}}
 
     
     @FXML
     void doSpellCheck(ActionEvent event) {
     	
-    	txtRisposta.clear();
+//    	txtRisposta.clear();
+    	txtRisposta.getChildren().clear();
 		listaDaCorreggere.clear();
+		flag=true;
 
 
     	if(cbLanguage.getValue()==null) {
@@ -94,6 +98,15 @@ public class SpellCheckerController {
 		StringTokenizer st = new StringTokenizer(inputText, " ");
 		while (st.hasMoreTokens()) {
 			listaDaCorreggere.add(st.nextToken().trim().toLowerCase());}
+		
+		for(int j =0; j < listaDaCorreggere.size(); j++){
+			char[] parola = listaDaCorreggere.get(j).toCharArray();
+			for (int i = 0; i < parola.length; i++) {
+				if (!Character.isLetter(parola[i])) {
+					char[] parolaFin = Arrays.copyOfRange(parola, 0, i);
+					String nuovaStringa = new String(parolaFin);
+					listaDaCorreggere.set(j, nuovaStringa);
+		}}}
 
 		long l1 = System.nanoTime();
     	List <RichWord> paroleErrate = devotoOli.spellCheckText(listaDaCorreggere);
@@ -105,7 +118,7 @@ public class SpellCheckerController {
     	}
     	
     	
- /*       Text richText = new Text("");
+        Text richText = new Text("");
 		
 		for (RichWord r : paroleErrate) {
 			if (r.isIscorretta() == true) {
@@ -113,13 +126,21 @@ public class SpellCheckerController {
 			} else {
 				richText = new Text(r.getParola() + " ");
 				richText.setFill(Color.RED);
+				flag = false;
 			}
 			txtRisposta.getChildren().add(richText);
 		}
-*/
+		if (flag)
+		{lblError.setText("Non ci sono errori");
+    	lblError.setTextFill(Color.BLACK);}
+		else
+		{
+			lblError.setText("Il testo contiene errori!");
+    	lblError.setTextFill(Color.RED);
+    	}
     	
-    	
-    	txtRisposta.setText(result);
+   
+ /*   	txtRisposta.setText(result);
     	
     	if (txtRisposta.getText().compareTo("") != 0)
     	{
@@ -129,7 +150,7 @@ public class SpellCheckerController {
     	else
 			{lblError.setText("Non ci sono errori");
     	lblError.setTextFill(Color.BLACK);}
-
+*/
     	
     	lblTimer.setText("Spell check completato in " + (l2 - l1) / 1E9 + " secondi");
     }
@@ -144,8 +165,8 @@ public class SpellCheckerController {
         assert lblError != null : "fx:id=\"lblError\" was not injected: check your FXML file 'SpellChecker.fxml'.";
         assert btnClearText != null : "fx:id=\"btnClearText\" was not injected: check your FXML file 'SpellChecker.fxml'.";
 
-        txtRisposta.setText("Selezionare una lingua");
-		txtRisposta.setDisable(true);
+  //      txtRisposta.setText("Selezionare una lingua");
+  //	txtRisposta.setDisable(true);
 
         cbLanguage.getItems().addAll("English", "Italian");
         
