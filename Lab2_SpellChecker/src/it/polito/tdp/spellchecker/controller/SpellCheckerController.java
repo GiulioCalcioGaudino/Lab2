@@ -116,7 +116,7 @@ public class SpellCheckerController {
 		}
 
 		long l1 = System.nanoTime();
-		List<RichWord> paroleErrate = devotoOli.spellCheckText(listaDaCorreggere);
+		Set<RichWord> paroleErrate = devotoOli.spellCheckText(listaDaCorreggere);
 		long l2 = System.nanoTime();
 
 		/*

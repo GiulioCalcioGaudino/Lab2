@@ -14,7 +14,7 @@ public class TestModel {
 		
 		devotoOli.loadDictionary();
 	
-		List<RichWord> l = devotoOli.spellCheckText(ole);
+		Set<RichWord> l = devotoOli.spellCheckText(ole);
 		
 		for (RichWord r : l) {
 			System.out.println(r.toString());

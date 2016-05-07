@@ -4,11 +4,16 @@ import java.util.*;
 public class Dictionary {
 	
 	List <String> dizionario;
-	List <RichWord> parole;
+	// List <RichWord> parole;
+	Set<RichWord> parole;
+
 	
 	public Dictionary(){
 		dizionario = new LinkedList();
-		parole = new LinkedList();
+		//parole = new LinkedList();
+		parole = new LinkedHashSet<RichWord>(500);
+
+
 	}
 	
 	
@@ -17,7 +22,7 @@ public class Dictionary {
 	}
 
 	
-	public List<RichWord> spellCheckText(List<String> inputTextList) {
+	public Set<RichWord> spellCheckText(List<String> inputTextList) {
 		parole.clear();
 		for(String s : inputTextList){
 			RichWord rw= new RichWord(s.toLowerCase());
